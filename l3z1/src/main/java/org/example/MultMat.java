@@ -50,7 +50,12 @@ public final class MultMat extends ArrayPI {
                     }
                 }
             } catch (SQLException e) { System.out.println("Ошибка при экспорте данных: " + e); }
-            int N;
+
+            String printSQL = "SELECT * FROM " + tbName;
+            try (PreparedStatement psInsert = connection.prepareStatement(printSQL)) {
+                ResultSet rs = psInsert.executeQuery();
+                while (rs.next()) {
+                    int N;
             while (true) {
                 System.out.print("Введите показатель степени для возведения матриц (целые положительные числа): ");
                 if (sc.hasNextInt()) {
@@ -58,7 +63,7 @@ public final class MultMat extends ArrayPI {
                     if (N >= 0) {
                         sc.nextLine(); break; // Корректный ввод
                     } else {
-                        System.out.println("Ошибка: число должно быть больше 0.");
+                        System.out.println("Ошибка: число должно быть не меньше 0.");
                     }
                 } else {
                     System.out.println("Ошибка: введите целое число.");
@@ -97,11 +102,6 @@ public final class MultMat extends ArrayPI {
                     }
                 }
             }
-
-            String printSQL = "SELECT * FROM " + tbName;
-            try (PreparedStatement psInsert = connection.prepareStatement(printSQL)) {
-                ResultSet rs = psInsert.executeQuery();
-                while (rs.next()) {
                     String updateSQL = "UPDATE " + tbName + " SET SUMMatrix = ?, SumMat = ?, Minus = ?, Step1 = ?, Step2 = ?, i = ? WHERE Matrix1 = ?";
                     try (PreparedStatement psUpdate = connection.prepareStatement(updateSQL)) {
                         String StrAll = "", StrSum = "", StrMin = "", StrSt1 = "", StrSt2 = "";
